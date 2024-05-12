@@ -1,45 +1,31 @@
-import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserService {
+export class TaskService {
   constructor(private http: HttpClient) {}
 
-  /**
-   * Get All user request.
-   */
-  getAllUsers(): Observable<any> {
+  getAllTasks(): Observable<any> {
     return this.http
-      .get<any>('http://localhost:4200/user', { observe: 'response' })
-      .pipe(
-        retry(3), // retry a failed request up to 3 times
-        catchError(this.handleError) // then handle the error
-      );
+      .get<any>('http://localhost:4200/task', { observe: 'response' })
+      .pipe(retry(3), catchError(this.handleError));
   }
 
-  /**
-   * Add a new user post requts.
-   * @param user a new user to add.
-   */
-  addUser(user: any): Observable<any> {
+  addTask(task: any): Observable<any> {
     return this.http
-      .post<any>('http://localhost:4200/user', user, {
+      .post<any>('http://localhost:4200/task', task, {
         observe: 'response',
       })
       .pipe(catchError(this.handleError));
   }
 
-  /**
-   * Delete an user request method.
-   * @param userId user unique id
-   */
-  deleteUser(userId: any) {
+  updateTask(taskId: number): Observable<any> {
     return this.http
-      .delete<any>('http://localhost:4200/user/' + userId, {
+      .delete<any>('http://localhost:4200/task/' + taskId, {
         observe: 'response',
       })
       .pipe(catchError(this.handleError));

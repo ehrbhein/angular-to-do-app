@@ -77,12 +77,17 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    const existingUser = this.registeredUsers.filter(
-      (it: { username: any }) => it.username === this.loginForm.value.username
-    )[0];
+    try {
+      const existingUser = this.registeredUsers.filter(
+        (it: { username: any }) => it.username === this.loginForm.value.username
+      )[0];
 
-    if (existingUser.password !== this.loginForm.value.password) {
-      this.showFailedLoginAlert = true;
+      if (existingUser.password !== this.loginForm.value.password) {
+        this.showFailedLoginAlert = true;
+        return;
+      }
+    } catch (e) {
+      console.log(e);
       return;
     }
 
@@ -103,7 +108,6 @@ export class LoginComponent implements OnInit {
       this.registerForm.value.role,
       this.registerForm.value.password
     );
-
 
     const response = this.addUser(newUser);
 
@@ -148,15 +152,15 @@ export class LoginComponent implements OnInit {
       this.userService.getAllUsers().subscribe(
         (res) => {
           if (res.status == 200) {
-            this.registeredUsers = JSON.parse(res.body);
+            this.registeredUsers = res.body;
             console.dir(this.registeredUsers);
             resolve();
           }
-          reject();
+          reject(undefined);
         },
         (err) => {
           console.error('Error Occurred When Get All Users ' + err);
-          reject();
+          reject(undefined);
         }
       );
     });

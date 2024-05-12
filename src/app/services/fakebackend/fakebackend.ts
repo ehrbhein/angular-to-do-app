@@ -15,8 +15,6 @@ import { User } from '../../models';
 
 @Injectable()
 export class FakeBackendHttpInterceptor implements HttpInterceptor {
-  // default users json path
-  private _employeeJsonPath = 'assets/default-users.json';
   private readonly USERS_KEY: string = 'users';
   private readonly TASKS_KEY: string = 'tasks';
 
@@ -41,9 +39,14 @@ export class FakeBackendHttpInterceptor implements HttpInterceptor {
     const registeredUsers: any[] =
       usersString === '' ? [] : JSON.parse(usersString);
 
-    if (url.endsWith('/users') && method === 'GET') {
-      const registeredUsers = this.getUsers();
-      const responseBody = registeredUsers === '' ? [] : registeredUsers;
+    const tasksString = this.getTasks();
+    const savedTasks: any[] = tasksString === '' ? [] : JSON.parse(tasksString);
+
+    // user
+    if (url.endsWith('/user') && method === 'GET') {
+      // const registeredUsers = this.getUsers();
+      // const responseBody = registeredUsers === '' ? [] : registeredUsers;
+      const responseBody = registeredUsers;
 
       return of(new HttpResponse({ status: 200, body: responseBody })).pipe(
         delay(500)
@@ -74,6 +77,8 @@ export class FakeBackendHttpInterceptor implements HttpInterceptor {
         delay(500)
       );
     }
+    // task
+
     // if there is not any matches return default request.
     return next.handle(req);
   }
