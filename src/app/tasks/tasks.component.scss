@@ -1,0 +1,16 @@
+.navbar-items {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.create-button-container {
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.create-button {
+    width: 153px;
+}
