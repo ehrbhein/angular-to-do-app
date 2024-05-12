@@ -11,7 +11,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { NgIf } from '@angular/common';
 
-import { AlertService, AuthenticationService } from '../../services';
+import {
+  AlertService,
+  AuthenticationService,
+  UserService,
+} from '../../services';
+import { User } from '../../models';
 
 @Component({
   selector: 'login',
@@ -41,6 +46,7 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
+    private userService: UserService,
     private formBuilder: FormBuilder
   ) {}
 
@@ -94,14 +100,34 @@ export class LoginComponent implements OnInit {
 
   onSubmitRegisterUser() {
     this.showUserRegisteredAlert = false;
-    if (this.registerForm.status !== 'INVALID') {
-      // todo: create "save user" database call
-
-      console.log(this.registerForm);
-      // this.showUserRegisteredAlert = true;
-      this.closeModal();
-      this.showUserCreatedAlert();
+    if (this.registerForm.status === 'INVALID') {
+      return;
     }
+
+    console.log(this.registerForm.value);
+
+    const randomId = Math.floor(Math.random() * 300);
+    const newUser: User = {
+      id: randomId,
+      username: this.registerForm.value.username,
+      password: this.registerForm.value.password,
+    };
+
+    this.userService
+      .register(this.registerForm.value)
+      .pipe(first())
+      .subscribe(
+        (data) => {
+          this.alertService.success('Registration successful', true);
+          // this.router.navigate(['/login']);
+        },
+        (error) => {
+          this.alertService.error(error);
+        }
+      );
+
+    this.closeModal();
+    this.showUserCreatedAlert();
 
     this.initializeForms();
   }

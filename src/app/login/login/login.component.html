@@ -1,13 +1,6 @@
-<!-- @if(showUserRegisteredAlert){
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-  <strong>Success!</strong> New user registered.
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-} -->
 <div id="liveAlertPlaceholder"></div>
 <div class="login-page">
     <div class="login-section-container px-5 py-5">
-        <!-- @if(this.loginForm){ -->
         <form [formGroup]="loginForm" (ngSubmit)="onSubmitLogin()" *ngIf="loginForm">
             <h2 class="text-center">Angular To-do App</h2>
             <div class="mb-3 mt-5">
@@ -24,7 +17,6 @@
                     data-bs-target="#registerModal">Register</button>
             </div>
         </form>
-        <!-- } -->
     </div>
 </div>
 

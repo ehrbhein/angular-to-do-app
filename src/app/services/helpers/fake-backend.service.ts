@@ -19,7 +19,8 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     // array in local storage for registered users
-    let users: any[] = JSON.parse(localStorage.getItem('users')) || [];
+    // let users: any[] = JSON.parse(localStorage.getItem('users')) || [];
+    let users: any[] = [];
 
     // wrap in delayed observable to simulate server api call
     return (
@@ -45,8 +46,6 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                 let body = {
                   id: user.id,
                   username: user.username,
-                  firstName: user.firstName,
-                  lastName: user.lastName,
                   token: 'fake-jwt-token',
                 };
 
