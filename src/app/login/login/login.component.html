@@ -11,7 +11,48 @@
         </div>
         <div class="login-function">
             <button type="button" class="btn btn-primary login-button">Login</button>
-            <p class="mt-2"><a class="link-opacity-50-hover" href="#">Register</a></p>
+            <button type="button" class="btn mt-3" data-bs-toggle="modal"
+                data-bs-target="#registerModal">Register</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form [formGroup]="RegisterForm" (ngSubmit)="onSubmit()">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Register User</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="registerUsername" class="form-label">Username</label>
+                        <input class="form-control" type="text" id="registerUsername" formControlName="username">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="registerRole">Role</label>
+                        <select class="form-select" id="registerRole" formControlName="role">
+                            <option selected></option>
+                            <option value="1">Developer</option>
+                            <option value="2">Manager</option>
+                            <option value="3">Admin</option>
+                        </select>
+                    </div>
+
+                    <div class="">
+                        <label for="registerPassword" class="form-label">Password</label>
+                        <input class="form-control" type="password" id="registerPassword" formControlName="password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-button" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary modal-button">Ok</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
