@@ -2,8 +2,11 @@
 <div class="login-page">
     <div class="login-section-container px-5 py-5">
         <form [formGroup]="loginForm" (ngSubmit)="onSubmitLogin()" *ngIf="loginForm">
-            <h2 class="text-center">Angular To-do App</h2>
-            <div class="mb-3 mt-5">
+            <h2 class="text-center mb-5">Angular To-do App</h2>
+            <div class="alert alert-danger" role="alert" *ngIf="showFailedLoginAlert">
+                Wrong username or password!
+            </div>
+            <div class="mb-3">
                 <label for="formUsername" class="form-label">Username</label>
                 <input class="form-control" type="text" id="formUsername" formControlName="username">
             </div>
@@ -30,7 +33,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-
+                    <div class="alert alert-danger" role="alert" *ngIf="showFailedRegistrationAlert">
+                        Invalid username. Someone with the same username already exists!
+                    </div>
                     <div class="mb-3">
                         <label for="registerUsername" class="form-label">Username</label>
                         <input class="form-control" type="text" id="registerUsername" formControlName="username">
@@ -62,7 +67,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary modal-button" data-bs-dismiss="modal" #closeModalButton>Cancel</button>
+                    <button type="button" class="btn btn-secondary modal-button" data-bs-dismiss="modal"
+                        #closeModalButton>Cancel</button>
                     <button type="submit" class="btn btn-primary modal-button">Ok</button>
                 </div>
             </form>

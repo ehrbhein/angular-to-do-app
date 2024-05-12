@@ -66,9 +66,7 @@ export class FakeBackendHttpInterceptor implements HttpInterceptor {
       registeredUsers.push(newUser);
       this.saveUsers(JSON.stringify(registeredUsers));
 
-      return of(new HttpResponse({ status: 200, body: newUser })).pipe(
-        delay(500)
-      );
+      return of(new HttpResponse({ status: 200, body: newUser })).pipe();
     }
     if (url.match(/\/user\/.*/) && method === 'DELETE') {
       const empId = this.getEmployeeId(url);

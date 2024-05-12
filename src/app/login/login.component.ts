@@ -35,6 +35,8 @@ export class LoginComponent implements OnInit {
 
   public registeredUsers!: any;
   public showUserRegisteredAlert!: boolean;
+  public showFailedLoginAlert: boolean = false;
+  public showFailedRegistrationAlert: boolean = false;
   private returnUrl!: string;
 
   constructor(
@@ -67,24 +69,33 @@ export class LoginComponent implements OnInit {
     return this.loginForm.controls;
   }
 
-  onSubmitLogin() {
-    // todo: link login flow
-    this.getUsers();
+  async onSubmitLogin() {
+    this.showFailedLoginAlert = false;
+    await this.getUsers();
 
-    if (!this.loginForm.valid) {
+    if (this.loginForm.status === 'INVALID') {
+      return;
+    }
+
+    const existingUser = this.registeredUsers.filter(
+      (it: { username: any }) => it.username === this.loginForm.value.username
+    )[0];
+
+    if (existingUser.password !== this.loginForm.value.password) {
+      this.showFailedLoginAlert = true;
       return;
     }
 
     console.dir(this.loginForm);
+    this.router.navigateByUrl('/tasks');
   }
 
   onSubmitRegisterUser() {
     this.showUserRegisteredAlert = false;
+    this.showFailedRegistrationAlert = false;
     if (this.registerForm.status === 'INVALID') {
       return;
     }
-
-    console.log(this.registerForm.value);
 
     const newUser: User = new User(
       uuid(),
@@ -93,16 +104,17 @@ export class LoginComponent implements OnInit {
       this.registerForm.value.password
     );
 
-    this.closeModal();
 
     const response = this.addUser(newUser);
 
     if (response === undefined) {
       console.error(response);
       this.initializeForms();
+      this.showFailedRegistrationAlert = true;
       return;
     }
 
+    this.closeModal();
     this.showUserCreatedAlert();
     this.initializeForms();
   }
@@ -131,24 +143,30 @@ export class LoginComponent implements OnInit {
   }
 
   // private getUsers(): User[] {
-  private getUsers(): void {
-    this.userService.getAllUsers().subscribe(
-      (resolve) => {
-        if (resolve.status == 200) {
-          this.registeredUsers = JSON.parse(resolve.body);
-          console.dir(this.registeredUsers);
+  private getUsers(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.userService.getAllUsers().subscribe(
+        (res) => {
+          if (res.status == 200) {
+            this.registeredUsers = JSON.parse(res.body);
+            console.dir(this.registeredUsers);
+            resolve();
+          }
+          reject();
+        },
+        (err) => {
+          console.error('Error Occurred When Get All Users ' + err);
+          reject();
         }
-      },
-      (err) => console.error('Error Occurred When Get All Users ' + err)
-    );
-
-    console.dir(this.registeredUsers);
+      );
+    });
   }
 
   private addUser(newUser: User): any {
     let response = null;
     this.userService.addUser(newUser).subscribe(
       (resolve) => {
+        console.dir(resolve);
         if (resolve.status == 200) {
           response = resolve.body;
           console.dir(resolve.body);
