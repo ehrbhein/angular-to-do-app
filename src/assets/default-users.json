@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1c0a41bb-d3c4-4218-9f10-32df0063846e",
+    "username": "Jani",
+    "role": "ADMIN",
+    "password": "1234"
+  },
+  {
+    "id": "1c0a41bd-d3c4-4218-9f10-32df0063846e",
+    "username": "Rex",
+    "role": "MANAGER",
+    "password": "1234"
+  },
+  {
+    "id": "1c0a44bb-d3c4-4218-9f10-32df0063846e",
+    "username": "Dio",
+    "role": "DEVELOPER",
+    "password": "1234"
+  }
+]

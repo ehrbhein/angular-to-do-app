@@ -8,15 +8,11 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { first } from 'rxjs/operators';
+import { v4 as uuid } from 'uuid';
 import { NgIf } from '@angular/common';
 
-import {
-  AlertService,
-  AuthenticationService,
-  UserService,
-} from '../../services';
 import { User } from '../../models';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'login',
@@ -38,23 +34,19 @@ export class LoginComponent implements OnInit {
     password: new FormControl('', Validators.required),
   });
 
+  public registeredUsers!: any;
   public showUserRegisteredAlert!: boolean;
   private returnUrl!: string;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthenticationService,
-    private alertService: AlertService,
-    private userService: UserService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
     this.initializeForms;
-
-    // reset login status
-    this.authenticationService.logout();
 
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
@@ -79,23 +71,13 @@ export class LoginComponent implements OnInit {
 
   onSubmitLogin() {
     // todo: link login flow
+    this.getUsers();
+
     if (!this.loginForm.valid) {
       return;
     }
 
     console.dir(this.loginForm);
-
-    // this.authenticationService
-    //   .login(this.loginForm.value.username, this.loginForm.value.password)
-    //   .pipe(first())
-    //   .subscribe(
-    //     (data) => {
-    //       this.router.navigate([this.returnUrl]);
-    //     },
-    //     (error) => {
-    //       this.alertService.error(error);
-    //     }
-    //   );
   }
 
   onSubmitRegisterUser() {
@@ -106,29 +88,24 @@ export class LoginComponent implements OnInit {
 
     console.log(this.registerForm.value);
 
-    const randomId = Math.floor(Math.random() * 300);
-    const newUser: User = {
-      id: randomId,
-      username: this.registerForm.value.username,
-      password: this.registerForm.value.password,
-    };
-
-    this.userService
-      .register(this.registerForm.value)
-      .pipe(first())
-      .subscribe(
-        (data) => {
-          this.alertService.success('Registration successful', true);
-          // this.router.navigate(['/login']);
-        },
-        (error) => {
-          this.alertService.error(error);
-        }
-      );
+    const newUser: User = new User(
+      uuid(),
+      this.registerForm.value.username,
+      this.registerForm.value.role,
+      this.registerForm.value.password
+    );
 
     this.closeModal();
-    this.showUserCreatedAlert();
 
+    const response = this.addUser(newUser);
+
+    if (response === undefined) {
+      console.error(response);
+      this.initializeForms();
+      return;
+    }
+
+    this.showUserCreatedAlert();
     this.initializeForms();
   }
 
@@ -153,5 +130,35 @@ export class LoginComponent implements OnInit {
 
   private closeModal(): void {
     this.closeModalButton.nativeElement.click();
+  }
+
+  // private getUsers(): User[] {
+  private getUsers(): void {
+    this.userService.getAllUsers().subscribe(
+      (resolve) => {
+        if (resolve.status == 200) {
+          this.registeredUsers = JSON.parse(resolve.body);
+          console.dir(this.registeredUsers);
+        }
+      },
+      (err) => console.error('Error Occurred When Get All Users ' + err)
+    );
+
+    console.dir(this.registeredUsers);
+  }
+
+  private addUser(newUser: User): any {
+    let response = null;
+    this.userService.addUser(newUser).subscribe(
+      (resolve) => {
+        if (resolve.status == 200) {
+          response = resolve.body;
+          console.dir(resolve.body);
+        }
+      },
+      (err) => console.error('Error Occurred When Adding New User ' + err)
+    );
+
+    return response === null ? undefined : response;
   }
 }
