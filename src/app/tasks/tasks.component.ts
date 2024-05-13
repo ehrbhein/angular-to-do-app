@@ -38,6 +38,7 @@ export class TasksComponent implements OnInit {
   public showInvalidCreateTaskFormAlert: boolean = false;
   public showNewTaskCreatedAlert: boolean = false;
   public userName!: string;
+  public userRole!: string;
   public successAlertMessage!: string;
   public showSuccessAlert: boolean = false;
   public showCreateTaskButton: boolean = false;
@@ -154,6 +155,13 @@ export class TasksComponent implements OnInit {
   private initializeCreateTaskButton(): void {
     this.showCreateTaskButton =
       this.userService.getLoggedInUserRole() === Roles.MANAGER.toString();
+
+      try{
+        const loggedInUser = this.userService.getLoggedInUser();
+        this.userRole = loggedInUser?.user.role || '';
+      } catch(e) {
+        console.error(e);
+      }
   }
 
   private initializeSuccessMessage(eventType: string): void {

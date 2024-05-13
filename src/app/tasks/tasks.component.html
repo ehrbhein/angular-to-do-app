@@ -2,16 +2,24 @@
     <div class="container-fluid">
         <a class="navbar-brand h1">TO-DO App</a>
         <div class="navbar-items" id="navbarText">
-            <span class="navbar-text me-4"><strong>Signed in as:
-                </strong>&ensp;{{userName}}</span>
+            <span class="navbar-text me-4">
+                <span class="tab">
+                    <strong>Signed in as:
+                    </strong>{{userName}}
+                </span>
+                <span class="tab">
+                    <strong>Role:
+                    </strong>{{userRole}}
+                </span>
+            </span>
             <button type="button" class="btn btn-light" (click)="logOut()">Log out</button>
         </div>
     </div>
 </nav>
 
 <div *ngIf="showSuccessAlert" class="alert alert-success alert-dismissible fade show" role="alert">
-  {{successAlertMessage}}
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" #closeAlertButton></button>
+    {{successAlertMessage}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" #closeAlertButton></button>
 </div>
 
 <div *ngIf="showCreateTaskButton" class="create-button-container px-3 my-4">
