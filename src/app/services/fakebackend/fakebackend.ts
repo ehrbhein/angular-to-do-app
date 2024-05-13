@@ -87,7 +87,6 @@ export class FakeBackendHttpInterceptor implements HttpInterceptor {
     if (url.endsWith('/task') && method === 'POST') {
       let newTask = req.body;
 
-      console.dir(newTask);
       savedTasks.push(newTask);
       this.saveTasks(JSON.stringify(savedTasks));
 

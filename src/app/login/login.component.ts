@@ -85,6 +85,7 @@ export class LoginComponent implements OnInit {
     this.router.navigate(['tasks'], {
       queryParams: {
         userId: existingUser.id,
+        userName: existingUser.username,
       },
     });
   }
@@ -162,10 +163,8 @@ export class LoginComponent implements OnInit {
     let response = null;
     this.userService.addUser(newUser).subscribe(
       (resolve) => {
-        console.dir(resolve);
         if (resolve.status == 200) {
           response = resolve.body;
-          console.dir(resolve.body);
         }
       },
       (err) => console.error('Error Occurred When Adding New User ' + err)

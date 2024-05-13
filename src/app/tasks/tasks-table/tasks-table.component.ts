@@ -24,7 +24,7 @@ export class TasksTableComponent implements OnInit {
 
   public allowEditToCards: boolean = false;
   private readonly allowedRolesForEdit: string[] = [
-    Roles.MANAGER.toString(),
+    Roles.DEVELOPER.toString(),
     Roles.ADMIN.toString(),
   ];
 
@@ -84,7 +84,6 @@ export class TasksTableComponent implements OnInit {
       Status.AWAITED.toString(),
       this.savedTasks
     );
-    console.dir(this.awaitedTasks);
 
     this.toDoTasks = this.filterTaskByStatus(
       Status.TO_DO.toString(),

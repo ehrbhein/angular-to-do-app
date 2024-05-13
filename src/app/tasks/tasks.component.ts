@@ -9,11 +9,9 @@ import {
 import { NgIf } from '@angular/common';
 import { Status, Task } from '../models/task';
 import { TaskService } from '../services/task.service';
-import { Title } from '@angular/platform-browser';
 import { TaskUpdateService } from './task-update.service';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
-import { User } from '../models';
 
 @Component({
   selector: 'tasks',
@@ -29,6 +27,7 @@ export class TasksComponent implements OnInit {
 
   public showInvalidCreateTaskFormAlert: boolean = false;
   public showNewTaskCreatedAlert: boolean = false;
+  public userName!: string;
 
   private savedTasks!: any[];
   private userId!: String;
@@ -39,7 +38,12 @@ export class TasksComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private authService: AuthenticationService,
     private router: Router
-  ) {}
+  ) {
+    activatedRoute.queryParams.subscribe((param) => {
+      this.userId = param['userId'];
+      this.userName = param['userName'];
+    });
+  }
 
   public createTasksForm: FormGroup = new FormGroup({
     title: new FormControl('', Validators.required),
@@ -47,7 +51,6 @@ export class TasksComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.getRouteInfo();
     this.authService.authenticate(this.userId);
   }
 
@@ -66,15 +69,12 @@ export class TasksComponent implements OnInit {
       return;
     }
 
-    console.dir(this.savedTasks.length);
 
     if (this.savedTasks.length === 0) {
       newTaskId = 0;
     } else {
       this.savedTasks.sort((a, b) => b.id - a.id);
       newTaskId = this.savedTasks[0].id + 1;
-      console.dir(this.savedTasks[0]);
-      console.dir(this.savedTasks);
     }
 
     const newTask = new Task(
@@ -101,12 +101,6 @@ export class TasksComponent implements OnInit {
     this.taskUpdateService.broadCastUpdate(newTask);
   }
 
-  private getRouteInfo(): void {
-    this.activatedRoute.queryParams.subscribe((param) => {
-      this.userId = param['userId'];
-    });
-  }
-
   private closeModal(): void {
     this.closeModalButton.nativeElement.click();
   }
@@ -117,7 +111,6 @@ export class TasksComponent implements OnInit {
         (res) => {
           if (res.status == 200) {
             this.savedTasks = res.body;
-            console.dir(this.savedTasks);
             resolve();
           }
           reject(undefined);

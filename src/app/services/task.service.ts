@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
+import { Task } from '../models/task';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,6 @@ export class TaskService {
   }
 
   addTask(task: any): Observable<any> {
-    console.dir(task);
     return this.http
       .post<any>('/task', task, {
         observe: 'response',
@@ -24,9 +24,9 @@ export class TaskService {
       .pipe(catchError(this.handleError));
   }
 
-  updateTask(taskId: number): Observable<any> {
+  updateTask(taskId: number, task: any): Observable<any> {
     return this.http
-      .delete<any>('/task/' + taskId, {
+      .put<any>('/task/' + taskId, task, {
         observe: 'response',
       })
       .pipe(catchError(this.handleError));
