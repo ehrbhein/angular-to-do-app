@@ -48,7 +48,10 @@ export class TasksComponent implements OnInit {
   >([
     [EventType.CREATE.toString(), 'New task created successfully.'],
     [EventType.UPDATE.toString(), 'Task updated successfully!'],
-    [EventType.DELETE.toString(), 'Task has been removed from project successfully.'],
+    [
+      EventType.DELETE.toString(),
+      'Task has been removed from project successfully.',
+    ],
   ]);
 
   private savedTasks!: any[];
@@ -71,12 +74,11 @@ export class TasksComponent implements OnInit {
       this.initializeSuccessMessage(context.eventType);
 
       this.closeSuccessAlert();
-
     });
   }
 
-  closeSuccessAlert():void{
-    setTimeout(()=>{
+  closeSuccessAlert(): void {
+    setTimeout(() => {
       this.closeAlertButton.nativeElement.click();
       this.showSuccessAlert = false;
     }, 5000);
@@ -134,6 +136,7 @@ export class TasksComponent implements OnInit {
     }, 6000);
 
     this.closeModal();
+    this.cleanUpCreateTaskForm();
     this.showInvalidCreateTaskForm = false;
     this.taskUpdateService.broadCastUpdate({
       context: newTask,
@@ -141,9 +144,12 @@ export class TasksComponent implements OnInit {
     });
   }
 
-  // private hideSuccessAlert(): void {
-  //   this.showSuccessAlert = false;
-  // }
+  private cleanUpCreateTaskForm(): void {
+    this.createTasksForm.setValue({
+      title: '',
+      description: '',
+    });
+  }
 
   private initializeCreateTaskButton(): void {
     this.showCreateTaskButton =
