@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 import { TaskService } from '../../../services/task.service';
 import { Roles } from '../../../models';
+import { UpdateTaskModalService } from '../../update-task-modal/update-task-modal.service';
 
 @Component({
   selector: 'task-card',
@@ -22,23 +23,23 @@ export class TaskCardComponent implements OnInit {
   @Input() allowEdit!: boolean;
   @Input() currentUserRole!: string;
 
-  private readonly editOptionsMap: Map<string, string[]> = new Map<
-    string,
-    string[]
-  >([
-    [
-      Roles.DEVELOPER.toString(),
-      [Status.TO_DO.toString(), Status.DONE.toString()],
-    ],
-    [
-      Roles.ADMIN.toString(),
-      [
-        Status.TO_DO.toString(),
-        Status.DENIED.toString(),
-        Status.DONE.toString(),
-      ],
-    ],
-  ]);
+  // private readonly editOptionsMap: Map<string, string[]> = new Map<
+  //   string,
+  //   string[]
+  // >([
+  //   [
+  //     Roles.DEVELOPER.toString(),
+  //     [Status.TO_DO.toString(), Status.DONE.toString()],
+  //   ],
+  //   [
+  //     Roles.ADMIN.toString(),
+  //     [
+  //       Status.TO_DO.toString(),
+  //       Status.DENIED.toString(),
+  //       Status.DONE.toString(),
+  //     ],
+  //   ],
+  // ]);
 
   public showEditOptions!: string[];
 
@@ -48,59 +49,18 @@ export class TaskCardComponent implements OnInit {
     status: new FormControl('', Validators.required),
   });
 
-  constructor(private taskService: TaskService) {}
+  private modalService!: UpdateTaskModalService;
 
-  ngOnInit(): void {
-    this.initializeEditOptions();
-    this.initializeFormData();
+  constructor(
+    private taskService: TaskService,
+    updateTaskModalService: UpdateTaskModalService
+  ) {
+    this.modalService = updateTaskModalService;
   }
 
-  public initializeEditOptions(): void {
-    this.showEditOptions = this.editOptionsMap.get(this.currentUserRole) ?? [];
-  }
+  ngOnInit(): void {}
 
-  onSubmitUpdateForm(): void {
-    if (this.updateTaskForm.status === 'INVALID') {
-      return;
-    }
-
-    const updatedTask: Task = {
-      id: this.task.id,
-      title: this.updateTaskForm.value.title,
-      description: this.updateTaskForm.value.description,
-      status: this.updateTaskForm.value.status,
-    };
-
-
-    const response = this.updateTask(updatedTask);
-
-    console.dir(response);
-
-    if (response === undefined) {
-      return;
-    }
-
-    alert('task updated');
-  }
-
-  private initializeFormData(): void {
-    this.updateTaskForm.controls['title'].setValue(this.task.title);
-    this.updateTaskForm.controls['status'].setValue(this.task.status);
-    this.updateTaskForm.controls['description'].setValue(this.task.description);
-  }
-
-  private updateTask(updatedTask: Task): any {
-    let response = null;
-    this.taskService.updateTask(this.task.id, updatedTask).subscribe(
-      (res) => {
-        console.dir(res);
-        if (res.status == 200) {
-          response = res.body;
-        }
-      },
-      (err) => console.error('Error Occurred When Adding New User ' + err)
-    );
-
-    return response === null ? undefined : response;
+  public openUpdateModal(): void {
+    this.modalService.openUpdateTasksModal(this.task, this.currentUserRole);
   }
 }

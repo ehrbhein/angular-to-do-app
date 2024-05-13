@@ -1,0 +1,32 @@
+<div class="modal-header">
+    <h4 class="modal-title">Update Task</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+</div>
+<div class="modal-body">
+    <form (ngSubmit)="onUpdateTask()" [formGroup]="updateTaskForm">
+        <div class="alert alert-warning" role="alert" *ngIf="!this.updateTaskForm.valid">
+            All fields must be filled out.
+        </div>
+        <div class="row">
+            <div class="col-8 mb-3 px-2">
+                <label for="updateTitle" class="form-label">Title</label>
+                <input class="form-control" type="text" id="updateTitle" formControlName="title">
+            </div>
+            <div class="col mb-3 px-2">
+                <label class="form-label" for="updateStatus">Status</label>
+                <select class="form-select" id="updateStatus" formControlName="status">
+                    <option *ngFor="let option of showEditOptions" value="{{option}}">{{option}}</option>
+                </select>
+            </div>
+            <div class="mb-3 px-2">
+                <label for="updateDescription" class="form-label">Description</label>
+                <input class="form-control" type="text" id="updateDescription" formControlName="description"
+                    [value]="task.title">
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="closeModal()">Close</button>
+    <button type="button" class="btn btn-primary" (click)="onUpdateTask()">Ok</button>
+</div>
