@@ -1,5 +1,5 @@
-<div class="tasks-table-container row px-3">
-    <div class="col-sm-12 col-md-4 py-3">
+<div class="tasks-table-container row px-3" *ngIf="!isLoading">
+    <div class="col-sm-12 col-md-4 py-3" *ngIf="showAwaitedTasks">
         <h3>Awaited</h3>
         <div>
             <task-card *ngFor="let task of awaitedTasks" [task]="task" [allowEdit]="allowEditToCards" [currentUserRole]="currentUser.role"></task-card>

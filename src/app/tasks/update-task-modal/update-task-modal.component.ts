@@ -40,11 +40,7 @@ export class UpdateTaskModalComponent implements OnInit {
     ],
     [
       Roles.ADMIN.toString(),
-      [
-        Status.TO_DO.toString(),
-        Status.DENIED.toString(),
-        Status.DONE.toString(),
-      ],
+      [Status.TO_DO.toString(), Status.DENIED.toString()],
     ],
   ]);
 

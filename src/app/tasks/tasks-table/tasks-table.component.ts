@@ -3,14 +3,14 @@ import { TaskCardComponent } from './task-card/task-card.component';
 import { TaskService } from '../../services/task.service';
 import { Status, Task } from '../../models/task';
 import { TaskUpdateService } from '../task-update.service';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { AuthorizedUser, Roles, User } from '../../models';
 import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'tasks-table',
   standalone: true,
-  imports: [NgFor, TaskCardComponent],
+  imports: [NgFor, TaskCardComponent, NgIf],
   templateUrl: './tasks-table.component.html',
   styleUrl: './tasks-table.component.scss',
 })
@@ -21,10 +21,16 @@ export class TasksTableComponent implements OnInit {
   public awaitedTasks!: Task[];
   public toDoTasks!: Task[];
   public doneTasks!: Task[];
+  public showAwaitedTasks: boolean = false;
+  public isLoading: boolean = true;
 
   public allowEditToCards: boolean = false;
   private readonly allowedRolesForEdit: string[] = [
     Roles.DEVELOPER.toString(),
+    Roles.ADMIN.toString(),
+  ];
+  private readonly allowedRolesToViewAwaitedSection: string[] = [
+    Roles.MANAGER.toString(),
     Roles.ADMIN.toString(),
   ];
 
@@ -42,10 +48,16 @@ export class TasksTableComponent implements OnInit {
     await this.initializeAndSortTasks();
     await this.getCurrentLoggedInUser();
     this.initializePermissions();
+
+    this.isLoading = false;
   }
 
   private initializePermissions(): void {
     this.allowEditToCards = this.allowedRolesForEdit.includes(
+      this.currentUser.role
+    );
+
+    this.showAwaitedTasks = this.allowedRolesToViewAwaitedSection.includes(
       this.currentUser.role
     );
   }
