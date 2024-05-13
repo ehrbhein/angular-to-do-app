@@ -24,4 +24,5 @@ export interface TaskBroadcastContext {
 export enum EventType {
   UPDATE = 'UPDATE',
   CREATE = 'CREATE',
+  DELETE = 'DELETE',
 }

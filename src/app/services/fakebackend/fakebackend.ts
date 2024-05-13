@@ -114,6 +114,17 @@ export class FakeBackendHttpInterceptor implements HttpInterceptor {
 
       return of(new HttpResponse({ status: 200, body: updateRequest })).pipe();
     }
+    if (url.match(/\/task\/.*/) && method === 'DELETE') {
+      const taskToRemoveId = this.getTaskId(url);
+
+      const updatedTasks = savedTasks.filter(
+        (task) => task.id != taskToRemoveId
+      );
+
+      this.saveTasks(JSON.stringify(updatedTasks));
+
+      return of(new HttpResponse({ status: 200, body: taskToRemoveId })).pipe();
+    }
     // if there is not any matches return default request.
     return next.handle(req);
   }

@@ -76,7 +76,6 @@ export class LoginComponent implements OnInit {
         return;
       }
     } catch (e) {
-      console.log(e);
       this.showFailedLoginAlert = true;
       return;
     }

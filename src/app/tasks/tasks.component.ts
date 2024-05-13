@@ -48,6 +48,7 @@ export class TasksComponent implements OnInit {
   >([
     [EventType.CREATE.toString(), 'New task created successfully.'],
     [EventType.UPDATE.toString(), 'Task updated successfully!'],
+    [EventType.DELETE.toString(), 'Task has been removed from project successfully.'],
   ]);
 
   private savedTasks!: any[];

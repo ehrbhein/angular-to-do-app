@@ -55,8 +55,6 @@ export class UpdateTaskModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.dir(this.task);
-    console.dir(this.currentUserRole);
     this.initializeFormData();
     this.initializeEditOptions();
   }
@@ -76,18 +74,42 @@ export class UpdateTaskModalComponent implements OnInit {
       description: this.updateTaskForm.value.description,
       status: this.updateTaskForm.value.status,
     };
+    if (updatedTask.status === 'DENIED') {
+      this.delete(updatedTask);
+    } else {
+      this.update(updatedTask);
+    }
+  }
 
-    const response = this.updateTask(updatedTask);
+  private update(task: Task): void {
+    const response = this.updateTask(task);
 
     if (response === undefined) {
       return;
     }
 
     this.closeModal();
+    this.broadcastEvent(task, EventType.UPDATE);
+  }
 
+  private delete(task: Task): void {
+    try {
+      const response = this.deleteTask(task.id);
+
+      if (response === undefined) {
+        return;
+      }
+      this.broadcastEvent(task, EventType.DELETE);
+    } catch (exception) {
+      console.error(exception);
+    }
+    this.closeModal();
+  }
+
+  private broadcastEvent(context: any, event: EventType) {
     this.taskUpdateService.broadCastUpdate({
-      context: updatedTask,
-      eventType: EventType.UPDATE,
+      context: context,
+      eventType: event,
     });
   }
 
@@ -109,7 +131,21 @@ export class UpdateTaskModalComponent implements OnInit {
           response = res.body;
         }
       },
-      (err) => console.error('Error Occurred When Adding New User ' + err)
+      (err) => console.error('Error Occurred When updating tasks ' + err)
+    );
+
+    return response === null ? undefined : response;
+  }
+
+  private deleteTask(taskId: number): any {
+    let response = null;
+    this.taskService.deleteTask(taskId).subscribe(
+      (res) => {
+        if (res.status == 200) {
+          response = res.body;
+        }
+      },
+      (err) => console.error('Error Occurred When removing tasks ' + err)
     );
 
     return response === null ? undefined : response;

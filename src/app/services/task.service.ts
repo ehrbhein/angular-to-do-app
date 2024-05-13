@@ -33,7 +33,7 @@ export class TaskService {
   }
   deleteTask(taskId: number): Observable<any> {
     return this.http
-      .delete<any>('/task' + taskId, {
+      .delete<any>('/task/' + taskId, {
         observe: 'response',
       })
       .pipe(catchError(this.handleError));
