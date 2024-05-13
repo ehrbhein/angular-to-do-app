@@ -10,6 +10,9 @@ import { NgIf } from '@angular/common';
 import { Status, Task } from '../models/task';
 import { TaskService } from '../services/task.service';
 import { Title } from '@angular/platform-browser';
+import { TaskUpdateService } from './task-update.service';
+import { ActivatedRoute, Route, Router } from '@angular/router';
+import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
   selector: 'tasks',
@@ -27,15 +30,30 @@ export class TasksComponent implements OnInit {
   public showNewTaskCreatedAlert: boolean = false;
 
   private savedTasks!: any[];
+  private userId!: String;
 
-  constructor(private taskService: TaskService) {}
+  constructor(
+    private taskService: TaskService,
+    private taskUpdateService: TaskUpdateService,
+    private activatedRoute: ActivatedRoute,
+    private authService: AuthenticationService,
+    private router: Router
+  ) {}
 
   public createTasksForm: FormGroup = new FormGroup({
     title: new FormControl('', Validators.required),
     description: new FormControl('', Validators.required),
   });
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getRouteInfo();
+    this.authService.authenticate(this.userId);
+  }
+
+  public logOut(): void {
+    this.authService.removeAuthenticatedUser();
+    this.router.navigateByUrl('/');
+  }
 
   async onCreateTaskSubmit(): Promise<void> {
     let newTaskId;
@@ -79,6 +97,13 @@ export class TasksComponent implements OnInit {
 
     this.closeModal();
     this.showInvalidCreateTaskForm = false;
+    this.taskUpdateService.broadCastUpdate(newTask);
+  }
+
+  private getRouteInfo(): void {
+    this.activatedRoute.queryParams.subscribe((param) => {
+      this.userId = param['userId'];
+    });
   }
 
   private closeModal(): void {

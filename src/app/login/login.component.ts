@@ -37,19 +37,11 @@ export class LoginComponent implements OnInit {
   public showUserRegisteredAlert!: boolean;
   public showFailedLoginAlert: boolean = false;
   public showFailedRegistrationAlert: boolean = false;
-  private returnUrl!: string;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private userService: UserService
-  ) {}
+  constructor(private router: Router, private userService: UserService) {}
 
   ngOnInit(): void {
     this.initializeForms;
-
-    // get return url from route parameters or default to '/'
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
   initializeForms() {
@@ -66,6 +58,7 @@ export class LoginComponent implements OnInit {
   }
 
   async onSubmitLogin() {
+    let existingUser;
     this.showFailedLoginAlert = false;
     await this.getUsers();
 
@@ -74,7 +67,7 @@ export class LoginComponent implements OnInit {
     }
 
     try {
-      const existingUser = this.registeredUsers.filter(
+      existingUser = this.registeredUsers.filter(
         (it: { username: any }) => it.username === this.loginForm.value.username
       )[0];
 
@@ -88,8 +81,12 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    console.dir(this.loginForm);
-    this.router.navigateByUrl('/tasks');
+    this.userService.saveLoginUser(existingUser);
+    this.router.navigate(['tasks'], {
+      queryParams: {
+        userId: existingUser.id,
+      },
+    });
   }
 
   onSubmitRegisterUser() {

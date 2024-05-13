@@ -1,20 +1,35 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TaskCardComponent } from './task-card/task-card.component';
 import { TaskService } from '../../services/task.service';
+import { Status, Task } from '../../models/task';
+import { TaskUpdateService } from '../task-update.service';
+import { NgFor } from '@angular/common';
 
 @Component({
   selector: 'tasks-table',
   standalone: true,
-  imports: [TaskCardComponent],
+  imports: [NgFor,TaskCardComponent],
   templateUrl: './tasks-table.component.html',
-  styleUrl: './tasks-table.component.scss'
+  styleUrl: './tasks-table.component.scss',
 })
-export class TasksTableComponent {
+export class TasksTableComponent implements OnInit {
+  public savedTasks!: Task[];
 
-  public savedTasks!: any[];
+  public awaitedTasks!: Task[];
+  public toDoTasks!: Task[];
+  public doneTasks!: Task[];
 
-  constructor(private taskService:TaskService){
+  constructor(
+    private taskService: TaskService,
+    private taskUpdateService: TaskUpdateService
+  ) {
+    taskUpdateService.taskUpdatedAnnounced.subscribe((context) => {
+      this.initializeAndSortTasks();
+    });
+  }
 
+  ngOnInit(): void {
+    this.initializeAndSortTasks();
   }
 
   private getAllTasks(): Promise<void> {
@@ -23,7 +38,6 @@ export class TasksTableComponent {
         (res) => {
           if (res.status == 200) {
             this.savedTasks = res.body;
-            console.dir(this.savedTasks);
             resolve();
           }
           reject(undefined);
@@ -36,4 +50,29 @@ export class TasksTableComponent {
     });
   }
 
+  private async initializeAndSortTasks(): Promise<void> {
+    await this.getAllTasks();
+
+    this.awaitedTasks = this.filterTaskByStatus(
+      Status.AWAITED.toString(),
+      this.savedTasks
+    );
+    console.dir(this.awaitedTasks);
+
+    this.toDoTasks = this.filterTaskByStatus(
+      Status.TO_DO.toString(),
+      this.savedTasks
+    );
+
+    this.doneTasks = this.filterTaskByStatus(
+      Status.DONE.toString(),
+      this.savedTasks
+    );
+  }
+
+  private filterTaskByStatus(status: string, target: any): Task[] {
+    return target.filter(function (it: Task) {
+      return it.status === status;
+    });
+  }
 }

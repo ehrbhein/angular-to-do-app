@@ -2,7 +2,7 @@
     <div class="col-sm-12 col-md-4">
         <h3>Awaited</h3>
         <div>
-            <!-- <task-card></task-card> -->
+            <task-card *ngFor="let task of awaitedTasks" [task]="task"></task-card>
         </div>
     </div>
     <div class="col-sm-12 col-md-4">

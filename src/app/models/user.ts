@@ -11,6 +11,15 @@ export class User {
     this.password = password;
   }
 }
+
+export class AuthorizedUser {
+  user: User;
+
+  constructor(user: User) {
+    this.user = user;
+  }
+}
+
 export enum Roles {
   DEVELOPER,
   MANAGER,

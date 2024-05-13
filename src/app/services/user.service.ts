@@ -2,23 +2,24 @@ import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
+import { AuthorizedUser, User } from '../models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
+  private LOGGED_IN_USER_KEY = 'logged_in_user';
+
   constructor(private http: HttpClient) {}
 
   /**
    * Get All user request.
    */
   getAllUsers(): Observable<any> {
-    return this.http
-      .get<any>('/user', { observe: 'response' })
-      .pipe(
-        retry(3), // retry a failed request up to 3 times
-        catchError(this.handleError) // then handle the error
-      );
+    return this.http.get<any>('/user', { observe: 'response' }).pipe(
+      retry(3), // retry a failed request up to 3 times
+      catchError(this.handleError) // then handle the error
+    );
   }
 
   /**
@@ -43,6 +44,36 @@ export class UserService {
         observe: 'response',
       })
       .pipe(catchError(this.handleError));
+  }
+
+  public saveLoginUser(user: User): void {
+    const hasLoggedInUser = this.getLoggedInUser !== null;
+
+    if (hasLoggedInUser){
+      this.deleteLoggedInUser();
+    }
+
+    const authorizedUser = new AuthorizedUser(user);
+
+    localStorage.setItem(
+      this.LOGGED_IN_USER_KEY,
+      JSON.stringify(authorizedUser)
+    );
+  }
+
+  public getLoggedInUser(): AuthorizedUser | null {
+    const user = localStorage.getItem(this.LOGGED_IN_USER_KEY);
+
+    if (user === undefined) {
+      return null;
+    }
+    const userObj = JSON.parse(user as string);
+
+    return { user: userObj.user };
+  }
+
+  public deleteLoggedInUser(): void {
+    localStorage.removeItem(this.LOGGED_IN_USER_KEY);
   }
 
   private handleError(error: HttpErrorResponse) {

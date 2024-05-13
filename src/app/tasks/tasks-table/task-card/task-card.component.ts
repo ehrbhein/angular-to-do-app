@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Task } from '../../../models/task';
+import { NgFor } from '@angular/common';
 
 @Component({
   selector: 'task-card',
   standalone: true,
-  imports: [],
+  imports: [NgFor],
   templateUrl: './task-card.component.html',
   styleUrl: './task-card.component.scss',
 })
@@ -13,5 +14,5 @@ export class TaskCardComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  
+
 }
