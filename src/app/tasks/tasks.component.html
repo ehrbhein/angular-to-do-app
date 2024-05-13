@@ -9,13 +9,17 @@
     </div>
 </nav>
 
-<div class="create-button-container px-3 my-4">
+<div *ngIf="showSuccessAlert" class="alert alert-success alert-dismissible fade show" role="alert">
+  {{successAlertMessage}}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" #closeAlertButton></button>
+</div>
+
+<div *ngIf="showCreateTaskButton" class="create-button-container px-3 my-4">
     <button type="button" class="btn btn-primary create-button" data-bs-toggle="modal"
         data-bs-target="#createTaskModal">Create Task</button>
 </div>
 
 <tasks-table></tasks-table>
-
 <!-- Modal -->
 <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModal" aria-hidden="true">
     <div class="modal-dialog">

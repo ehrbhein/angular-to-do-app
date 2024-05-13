@@ -31,6 +31,13 @@ export class TaskService {
       })
       .pipe(catchError(this.handleError));
   }
+  deleteTask(taskId: number): Observable<any> {
+    return this.http
+      .delete<any>('/task' + taskId, {
+        observe: 'response',
+      })
+      .pipe(catchError(this.handleError));
+  }
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

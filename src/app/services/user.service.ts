@@ -49,7 +49,7 @@ export class UserService {
   public saveLoginUser(user: User): void {
     const hasLoggedInUser = this.getLoggedInUser !== null;
 
-    if (hasLoggedInUser){
+    if (hasLoggedInUser) {
       this.deleteLoggedInUser();
     }
 
@@ -59,6 +59,11 @@ export class UserService {
       this.LOGGED_IN_USER_KEY,
       JSON.stringify(authorizedUser)
     );
+  }
+
+  public getLoggedInUserRole(): string {
+    const loggedInUser = this.getLoggedInUser();
+    return loggedInUser?.user.role ?? '';
   }
 
   public getLoggedInUser(): AuthorizedUser | null {

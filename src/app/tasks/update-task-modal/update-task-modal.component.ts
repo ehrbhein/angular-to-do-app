@@ -10,6 +10,7 @@ import {
 import { NgFor, NgIf } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { Roles } from '../../models';
+import { EventType, TaskUpdateService } from '../task-update.service';
 
 @Component({
   selector: 'update-task-modal',
@@ -49,7 +50,8 @@ export class UpdateTaskModalComponent implements OnInit {
 
   constructor(
     private activeModal: NgbActiveModal,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private taskUpdateService: TaskUpdateService
   ) {}
 
   ngOnInit(): void {
@@ -76,13 +78,17 @@ export class UpdateTaskModalComponent implements OnInit {
     };
 
     const response = this.updateTask(updatedTask);
-    console.dir(response);
 
     if (response === undefined) {
       return;
     }
 
-    alert('task updated!');
+    this.closeModal();
+
+    this.taskUpdateService.broadCastUpdate({
+      context: updatedTask,
+      eventType: EventType.UPDATE,
+    });
   }
 
   public initializeEditOptions(): void {
@@ -99,7 +105,6 @@ export class UpdateTaskModalComponent implements OnInit {
     let response = null;
     this.taskService.updateTask(this.task.id, updatedTask).subscribe(
       (res) => {
-        console.dir(res);
         if (res.status == 200) {
           response = res.body;
         }

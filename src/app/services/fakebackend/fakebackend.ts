@@ -112,7 +112,7 @@ export class FakeBackendHttpInterceptor implements HttpInterceptor {
 
       this.saveTasks(JSON.stringify(updateTasks));
 
-      return of(new HttpResponse({ status: 200, body: updateRequest })).pipe(delay(500));
+      return of(new HttpResponse({ status: 200, body: updateRequest })).pipe();
     }
     // if there is not any matches return default request.
     return next.handle(req);

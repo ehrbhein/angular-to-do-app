@@ -11,7 +11,17 @@ export class TaskUpdateService {
 
   constructor() {}
 
-  public broadCastUpdate(context: any) {
+  public broadCastUpdate(context: TaskBroadcastContext) {
     this.tasksUpdatedSource.next(context);
   }
+}
+
+export interface TaskBroadcastContext {
+  context: any;
+  eventType: EventType;
+}
+
+export enum EventType {
+  UPDATE = 'UPDATE',
+  CREATE = 'CREATE',
 }

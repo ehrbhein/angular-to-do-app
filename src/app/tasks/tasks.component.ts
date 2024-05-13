@@ -1,4 +1,11 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnChanges,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { TasksTableComponent } from './tasks-table/tasks-table.component';
 import {
   FormControl,
@@ -9,9 +16,11 @@ import {
 import { NgIf } from '@angular/common';
 import { Status, Task } from '../models/task';
 import { TaskService } from '../services/task.service';
-import { TaskUpdateService } from './task-update.service';
+import { EventType, TaskUpdateService } from './task-update.service';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
+import { UserService } from '../services/user.service';
+import { Roles } from '../models';
 
 @Component({
   selector: 'tasks',
@@ -22,12 +31,24 @@ import { AuthenticationService } from '../services/authentication.service';
 })
 export class TasksComponent implements OnInit {
   @ViewChild('closeModalButton') closeModalButton!: ElementRef;
+  @ViewChild('closeAlertButton') closeAlertButton!: ElementRef;
 
   public showInvalidCreateTaskForm: boolean = false;
 
   public showInvalidCreateTaskFormAlert: boolean = false;
   public showNewTaskCreatedAlert: boolean = false;
   public userName!: string;
+  public successAlertMessage!: string;
+  public showSuccessAlert: boolean = false;
+  public showCreateTaskButton: boolean = false;
+
+  private readonly successMessageMap: Map<string, string> = new Map<
+    string,
+    string
+  >([
+    [EventType.CREATE.toString(), 'New task created successfully.'],
+    [EventType.UPDATE.toString(), 'Task updated successfully!'],
+  ]);
 
   private savedTasks!: any[];
   private userId!: String;
@@ -37,12 +58,27 @@ export class TasksComponent implements OnInit {
     private taskUpdateService: TaskUpdateService,
     private activatedRoute: ActivatedRoute,
     private authService: AuthenticationService,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {
     activatedRoute.queryParams.subscribe((param) => {
       this.userId = param['userId'];
       this.userName = param['userName'];
     });
+
+    taskUpdateService.taskUpdatedAnnounced.subscribe(async (context) => {
+      this.initializeSuccessMessage(context.eventType);
+
+      this.closeSuccessAlert();
+
+    });
+  }
+
+  closeSuccessAlert():void{
+    setTimeout(()=>{
+      this.closeAlertButton.nativeElement.click();
+      this.showSuccessAlert = false;
+    }, 5000);
   }
 
   public createTasksForm: FormGroup = new FormGroup({
@@ -52,6 +88,7 @@ export class TasksComponent implements OnInit {
 
   ngOnInit(): void {
     this.authService.authenticate(this.userId);
+    this.initializeCreateTaskButton();
   }
 
   public logOut(): void {
@@ -68,7 +105,6 @@ export class TasksComponent implements OnInit {
       this.showInvalidCreateTaskForm = true;
       return;
     }
-
 
     if (this.savedTasks.length === 0) {
       newTaskId = 0;
@@ -98,7 +134,28 @@ export class TasksComponent implements OnInit {
 
     this.closeModal();
     this.showInvalidCreateTaskForm = false;
-    this.taskUpdateService.broadCastUpdate(newTask);
+    this.taskUpdateService.broadCastUpdate({
+      context: newTask,
+      eventType: EventType.CREATE,
+    });
+  }
+
+  // private hideSuccessAlert(): void {
+  //   this.showSuccessAlert = false;
+  // }
+
+  private initializeCreateTaskButton(): void {
+    this.showCreateTaskButton =
+      this.userService.getLoggedInUserRole() === Roles.MANAGER.toString();
+  }
+
+  private initializeSuccessMessage(eventType: string): void {
+    this.successAlertMessage = this.successMessageMap.get(eventType) ?? '';
+
+    if (this.successAlertMessage !== '') {
+      // alert(this.successAlertMessage);
+      this.showSuccessAlert = true;
+    }
   }
 
   private closeModal(): void {

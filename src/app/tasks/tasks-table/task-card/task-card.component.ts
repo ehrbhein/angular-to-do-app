@@ -8,7 +8,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { TaskService } from '../../../services/task.service';
-import { Roles } from '../../../models';
 import { UpdateTaskModalService } from '../../update-task-modal/update-task-modal.service';
 
 @Component({
@@ -23,24 +22,6 @@ export class TaskCardComponent implements OnInit {
   @Input() allowEdit!: boolean;
   @Input() currentUserRole!: string;
 
-  // private readonly editOptionsMap: Map<string, string[]> = new Map<
-  //   string,
-  //   string[]
-  // >([
-  //   [
-  //     Roles.DEVELOPER.toString(),
-  //     [Status.TO_DO.toString(), Status.DONE.toString()],
-  //   ],
-  //   [
-  //     Roles.ADMIN.toString(),
-  //     [
-  //       Status.TO_DO.toString(),
-  //       Status.DENIED.toString(),
-  //       Status.DONE.toString(),
-  //     ],
-  //   ],
-  // ]);
-
   public showEditOptions!: string[];
 
   public updateTaskForm: FormGroup = new FormGroup({
@@ -53,14 +34,15 @@ export class TaskCardComponent implements OnInit {
 
   constructor(
     private taskService: TaskService,
-    updateTaskModalService: UpdateTaskModalService
-  ) {
-    this.modalService = updateTaskModalService;
-  }
+    private updateTaskModalService: UpdateTaskModalService
+  ) {}
 
   ngOnInit(): void {}
 
   public openUpdateModal(): void {
-    this.modalService.openUpdateTasksModal(this.task, this.currentUserRole);
+    this.updateTaskModalService.openUpdateTasksModal(
+      this.task,
+      this.currentUserRole
+    );
   }
 }
