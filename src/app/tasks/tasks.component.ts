@@ -13,6 +13,7 @@ import { Title } from '@angular/platform-browser';
 import { TaskUpdateService } from './task-update.service';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
+import { User } from '../models';
 
 @Component({
   selector: 'tasks',

@@ -21,7 +21,7 @@ export class AuthorizedUser {
 }
 
 export enum Roles {
-  DEVELOPER,
-  MANAGER,
-  ADMIN,
+  DEVELOPER ="DEVELOPER",
+  MANAGER ="MANAGER",
+  ADMIN ="ADMIN",
 }

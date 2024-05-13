@@ -1,35 +1,62 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { TaskCardComponent } from './task-card/task-card.component';
 import { TaskService } from '../../services/task.service';
 import { Status, Task } from '../../models/task';
 import { TaskUpdateService } from '../task-update.service';
 import { NgFor } from '@angular/common';
+import { AuthorizedUser, Roles, User } from '../../models';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'tasks-table',
   standalone: true,
-  imports: [NgFor,TaskCardComponent],
+  imports: [NgFor, TaskCardComponent],
   templateUrl: './tasks-table.component.html',
   styleUrl: './tasks-table.component.scss',
 })
 export class TasksTableComponent implements OnInit {
   public savedTasks!: Task[];
+  public currentUser!: User;
 
   public awaitedTasks!: Task[];
   public toDoTasks!: Task[];
   public doneTasks!: Task[];
 
+  public allowEditToCards: boolean = false;
+  private readonly allowedRolesForEdit: string[] = [
+    Roles.MANAGER.toString(),
+    Roles.ADMIN.toString(),
+  ];
+
   constructor(
     private taskService: TaskService,
-    private taskUpdateService: TaskUpdateService
+    private taskUpdateService: TaskUpdateService,
+    private userService: UserService
   ) {
     taskUpdateService.taskUpdatedAnnounced.subscribe((context) => {
       this.initializeAndSortTasks();
     });
   }
 
-  ngOnInit(): void {
-    this.initializeAndSortTasks();
+  async ngOnInit(): Promise<void> {
+    await this.initializeAndSortTasks();
+    await this.getCurrentLoggedInUser();
+    this.initializePermissions();
+  }
+
+  private initializePermissions(): void {
+    this.allowEditToCards = this.allowedRolesForEdit.includes(
+      this.currentUser.role
+    );
+  }
+
+  private getCurrentLoggedInUser(): void {
+    let userResponse: AuthorizedUser | null =
+      this.userService.getLoggedInUser();
+
+    if (userResponse !== null) {
+      this.currentUser = userResponse.user;
+    }
   }
 
   private getAllTasks(): Promise<void> {
