@@ -65,10 +65,6 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  get loginFormFields() {
-    return this.loginForm.controls;
-  }
-
   async onSubmitLogin() {
     this.showFailedLoginAlert = false;
     await this.getUsers();
@@ -88,6 +84,7 @@ export class LoginComponent implements OnInit {
       }
     } catch (e) {
       console.log(e);
+      this.showFailedLoginAlert = true;
       return;
     }
 
@@ -146,14 +143,12 @@ export class LoginComponent implements OnInit {
     this.closeModalButton.nativeElement.click();
   }
 
-  // private getUsers(): User[] {
   private getUsers(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.userService.getAllUsers().subscribe(
         (res) => {
           if (res.status == 200) {
             this.registeredUsers = res.body;
-            console.dir(this.registeredUsers);
             resolve();
           }
           reject(undefined);

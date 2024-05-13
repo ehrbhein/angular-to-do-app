@@ -28,27 +28,20 @@
                     <div class="alert alert-warning" role="alert" *ngIf="showInvalidCreateTaskForm">
                         Fill out all required fields.
                     </div>
-                    <div class="row">
-                        <div class="col-8 mb-3">
-                            <label for="formTitle" class="form-label">Title</label>
-                            <input class="form-control" type="text" id="formTitle" formControlName="title">
-                        </div>
-                        <div class="col mb-3">
-                            <label for="formStatus" class="form-label">Status</label>
-                            <select class="form-select" id="formStatus" formControlName="status">
-                                <option *ngFor="let status of keys(statuses)" [ngValue]="status[status]">{{status}}
-                                </option>
-                            </select>
-                        </div>
+                    <div class="mb-3">
+                        <label for="formTitle" class="form-label">Title</label>
+                        <input class="form-control" type="text" id="formTitle" formControlName="title">
                     </div>
                     <div class="mb-3">
                         <label for="formDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="formDescription" rows="3" formControlName="description"></textarea>
+                        <textarea class="form-control" id="formDescription" rows="3"
+                            formControlName="description"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        #closeModalButton>Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
                 </div>
             </form>
         </div>

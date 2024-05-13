@@ -14,7 +14,7 @@ export class UserService {
    */
   getAllUsers(): Observable<any> {
     return this.http
-      .get<any>('http://localhost:4200/user', { observe: 'response' })
+      .get<any>('/user', { observe: 'response' })
       .pipe(
         retry(3), // retry a failed request up to 3 times
         catchError(this.handleError) // then handle the error
@@ -27,7 +27,7 @@ export class UserService {
    */
   addUser(user: any): Observable<any> {
     return this.http
-      .post<any>('http://localhost:4200/user', user, {
+      .post<any>('/user', user, {
         observe: 'response',
       })
       .pipe(catchError(this.handleError));
@@ -39,7 +39,7 @@ export class UserService {
    */
   deleteUser(userId: any) {
     return this.http
-      .delete<any>('http://localhost:4200/user/' + userId, {
+      .delete<any>('/user/' + userId, {
         observe: 'response',
       })
       .pipe(catchError(this.handleError));

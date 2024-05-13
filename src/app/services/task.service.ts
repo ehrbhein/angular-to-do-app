@@ -11,13 +11,14 @@ export class TaskService {
 
   getAllTasks(): Observable<any> {
     return this.http
-      .get<any>('http://localhost:4200/task', { observe: 'response' })
+      .get<any>('/task', { observe: 'response' })
       .pipe(retry(3), catchError(this.handleError));
   }
 
   addTask(task: any): Observable<any> {
+    console.dir(task);
     return this.http
-      .post<any>('http://localhost:4200/task', task, {
+      .post<any>('/task', task, {
         observe: 'response',
       })
       .pipe(catchError(this.handleError));
@@ -25,7 +26,7 @@ export class TaskService {
 
   updateTask(taskId: number): Observable<any> {
     return this.http
-      .delete<any>('http://localhost:4200/task/' + taskId, {
+      .delete<any>('/task/' + taskId, {
         observe: 'response',
       })
       .pipe(catchError(this.handleError));

@@ -44,8 +44,6 @@ export class FakeBackendHttpInterceptor implements HttpInterceptor {
 
     // user
     if (url.endsWith('/user') && method === 'GET') {
-      // const registeredUsers = this.getUsers();
-      // const responseBody = registeredUsers === '' ? [] : registeredUsers;
       const responseBody = registeredUsers;
 
       return of(new HttpResponse({ status: 200, body: responseBody })).pipe(
@@ -78,7 +76,45 @@ export class FakeBackendHttpInterceptor implements HttpInterceptor {
       );
     }
     // task
+    if (url.endsWith('/task') && method === 'GET') {
+      const responseBody = savedTasks;
 
+      return of(new HttpResponse({ status: 200, body: responseBody })).pipe(
+        delay(500)
+      );
+    }
+
+    if (url.endsWith('/task') && method === 'POST') {
+      let newTask = req.body;
+
+      console.dir(newTask);
+      savedTasks.push(newTask);
+      this.saveTasks(JSON.stringify(savedTasks));
+
+      return of(new HttpResponse({ status: 200, body: newTask })).pipe();
+    }
+
+    if (url.match(/\/task\/.*/) && method === 'PUT') {
+      const taskToUpdateId = this.getTaskId(url);
+      const updateRequest = req.body;
+
+      const updateTasks = savedTasks.map((task) => {
+        if (task.id == taskToUpdateId) {
+          return {
+            ...task,
+            title: updateRequest.title,
+            description: updateRequest.description,
+            status: updateRequest.status,
+          };
+        } else {
+          return task;
+        }
+      });
+
+      this.saveTasks(JSON.stringify(updateTasks));
+
+      return of(new HttpResponse({ status: 200, body: updateRequest })).pipe(delay(500));
+    }
     // if there is not any matches return default request.
     return next.handle(req);
   }
@@ -88,6 +124,11 @@ export class FakeBackendHttpInterceptor implements HttpInterceptor {
    * @param url
    */
   getEmployeeId(url: any) {
+    const urlValues = url.split('/');
+    return urlValues[urlValues.length - 1];
+  }
+
+  getTaskId(url: any) {
     const urlValues = url.split('/');
     return urlValues[urlValues.length - 1];
   }

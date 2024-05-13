@@ -2,9 +2,9 @@ export class Task {
   id: number;
   title: string;
   description: string;
-  status: Status;
+  status: string;
 
-  constructor(id: number, title: string, des: string, status: Status) {
+  constructor(id: number, title: string, des: string, status: string) {
     this.id = id;
     this.title = title;
     this.description = des;
@@ -13,8 +13,8 @@ export class Task {
 }
 
 export enum Status {
-  AWAITED,
-  TO_DO,
-  DONE,
-  DENIED,
+  AWAITED = 'AWAITED',
+  TO_DO = 'TO_DO',
+  DONE = 'DONE',
+  DENIED = 'DENIED',
 }
